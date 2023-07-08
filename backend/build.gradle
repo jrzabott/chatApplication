@@ -1,0 +1,71 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.1.1'
+	id 'io.spring.dependency-management' version '1.1.0'
+	id 'idea'
+}
+
+apply from: 'libs.gradle'
+
+group = 'chat-application'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_19
+	tasks.withType(JavaExec) {
+		jvmArgs('-XX:+UnlockExperimentalVMOptions')
+	}
+	tasks.withType(JavaCompile) {
+		options.compilerArgs += '--enable-preview'
+	}
+	tasks.withType(Test) {
+		jvmArgs('--enable-preview')
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+configurations {
+	runtimeClasspath {
+		extendsFrom implementation
+	}
+
+}
+
+dependencies {
+	implementation libs.logging
+	implementation libs.httpServer
+	implementation libs.spring
+	implementation libs.swagger
+	implementation libs.rabbitmq
+	implementation libs.apacheCommons
+
+	testImplementation libs.unitTest
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+//	systemProperty 'log4j2.debug', 'true'
+}
+
+idea {
+	module {
+		downloadJavadoc = true
+		downloadSources = true
+	}
+}
+
+sourceSets {
+	main {
+		resources {
+			srcDirs = ['src/main/resources']
+		}
+	}
+	test {
+		resources {
+			srcDirs = ['src/test/resources']
+		}
+	}
+}
